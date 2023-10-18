@@ -37,3 +37,14 @@ class Node:
             self.transaction_pool.add_transaction(transaction)
         else:
             print("Received transaction is invalid!")
+
+    def createProspectiveBlock(self, transactions):
+        # Create a new block using the provided transactions
+        new_block = Block(len(self.chain), transactions)
+        
+        # Further validation or processing can be done here if needed
+        
+        # For now, just print a message indicating the creation of a prospective block
+        print("Prospective block created with", len(transactions), "transactions.")
+        
+        return new_block

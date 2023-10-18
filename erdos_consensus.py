@@ -100,11 +100,20 @@ class ErdosConsensus:
         return forger
 
 
-    def handle_full_transaction_pool(self, merkle_root, transactions):
-        # Extract and store public keys from temp_transactions
-        for tx in temp_transactions:
-            self.excluded_public_keys.add(tx.senderPublicKey)
-            self.excluded_public_keys.add(tx.receiverPublicKey)
+    def handle_full_transaction_pool(self, temp_transactions):
+        excluded_public_keys = [tx.senderPublicKey for tx in temp_transactions] + [tx.receiverPublicKey for tx in temp_transactions]
+        hDigits = self.hashedDigits(temp_transactions[-1].timestamp)
+        forger = self.selectForger(hDigits, excluded_public_keys)
+        # Find the forger node based on the public key
+        forger_node = next(node for node in self.nodes if node.wallet.get_public_key() == forger)
+
+        # Send a message to the forger to create a prospective block
+        prospective_block = forger_node.createProspectiveBlock(temp_transactions)
+
+        # Further processing or validation can be done here if needed
+        
+        # For now, just print a message indicating the forger
+        print("Forger selected:", forger.decode('utf-8'))
         
 
     
